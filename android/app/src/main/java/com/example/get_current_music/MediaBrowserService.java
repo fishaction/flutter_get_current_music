@@ -15,8 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +22,6 @@ import com.example.get_current_music.tasks.*;
 import com.example.get_current_music.tasks.FindMediaAppsTask;
 
 public class MediaBrowserService extends Service {
-
-
-    private Snackbar mSnackbar;
 
     List<Intent> controllerServiceIntents;
 

@@ -32,7 +32,6 @@ import java.util.List;
 public class MediaAppDetails implements Parcelable {
     public final String packageName;
     public final String appName;
-    public final Bitmap icon;
     @Nullable
     public Bitmap banner;
     public final MediaSessionCompat.Token sessionToken;
@@ -45,7 +44,6 @@ public class MediaAppDetails implements Parcelable {
         this.packageName = packageName;
         appName = name;
         sessionToken = token;
-        icon = appIcon;
         // This TV app targets min sdk version 21, and a banner will only be present for the TV app
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             banner = appBanner;
@@ -62,14 +60,6 @@ public class MediaAppDetails implements Parcelable {
                            MediaSession.Token token) {
         packageName = info.packageName;
         appName = info.loadLabel(pm).toString();
-        Drawable appIcon = info.loadIcon(pm);
-        icon = BitmapUtils.convertDrawable(resources, appIcon, true);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            Drawable appBanner = info.loadBanner(pm);
-            if (appBanner != null) {
-                banner = BitmapUtils.convertDrawable(resources, appBanner, false);
-            }
-        }
 
         if (token != null) {
             // If we have a MediaSession Token, then we don't need to connect to the
@@ -87,10 +77,12 @@ public class MediaAppDetails implements Parcelable {
             FeatureInfo[] features = pm.getPackageInfo(
                     packageName, PackageManager.GET_CONFIGURATIONS).reqFeatures;
 
-            supportsAutomotive = features != null && Arrays.stream(features)
-                    .filter(f -> "android.hardware.type.automotive".equals(f.name))
-                    .findAny()
-                    .orElse(null) != null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                supportsAutomotive = features != null && Arrays.stream(features)
+                        .filter(f -> "android.hardware.type.automotive".equals(f.name))
+                        .findAny()
+                        .orElse(null) != null;
+            }
 
             Bundle metaData = pm.getApplicationInfo(packageName,
                     PackageManager.GET_META_DATA).metaData;
@@ -139,7 +131,6 @@ public class MediaAppDetails implements Parcelable {
     private MediaAppDetails(final Parcel parcel) {
         packageName = parcel.readString();
         appName = parcel.readString();
-        icon = parcel.readParcelable(MediaAppDetails.class.getClassLoader());
         sessionToken = parcel.readParcelable(MediaAppDetails.class.getClassLoader());
         componentName = parcel.readParcelable(MediaAppDetails.class.getClassLoader());
         supportsAuto = parcel.readInt() == 1;
@@ -155,7 +146,6 @@ public class MediaAppDetails implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(packageName);
         dest.writeString(appName);
-        dest.writeParcelable(icon, flags);
         dest.writeParcelable(sessionToken, flags);
         dest.writeParcelable(componentName, flags);
         dest.writeInt(supportsAuto ? 1 : 0);
