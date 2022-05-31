@@ -2,6 +2,7 @@ package com.example.get_current_music;
 
 import static androidx.media.MediaBrowserServiceCompat.BrowserRoot.EXTRA_SUGGESTED;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +39,7 @@ public class MediaAppControllerService extends Service {
         return intent;
     }
 
+    @SuppressLint("LongLogTag")
     private MediaAppDetails handleIntent(Intent intent){
         if(intent == null){
             return null;
@@ -60,6 +62,7 @@ public class MediaAppControllerService extends Service {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
+    @SuppressLint("LongLogTag")
     private void setupMediaController() {
         MediaSessionCompat.Token token = mMediaAppDetails.sessionToken;
         if (token == null) {
@@ -77,6 +80,7 @@ public class MediaAppControllerService extends Service {
 
         Log.d(TAG, "MediaControllerCompat created");
     }
+    @SuppressLint("LongLogTag")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mMediaAppDetails = handleIntent(intent);
@@ -126,6 +130,7 @@ public class MediaAppControllerService extends Service {
         @Override
         public void onSessionDestroyed() {}
 
+        @SuppressLint("LongLogTag")
         private void onUpdate() {
             MediaMetadataCompat mediaMetadataCompat = mController.getMetadata();
             PlaybackStateCompat playbackState = mController.getPlaybackState();
