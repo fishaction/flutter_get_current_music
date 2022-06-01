@@ -21,7 +21,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import androidx.media.MediaBrowserServiceCompat
-import com.example.refactoringnowmusic.MediaAppDetails
+import com.example.get_current_music.MediaAppDetails
 import java.util.ArrayList
 
 /**
