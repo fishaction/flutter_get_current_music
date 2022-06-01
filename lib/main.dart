@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,12 +33,39 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  String _musicTitle = "";
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  static const MethodChannel _methodChannel = MethodChannel("com.example.methodchannel/interop");
+  static const String startService = "startService";
+
+  Future<void> _startService() async{
+    await _methodChannel.invokeMethod(startService);
+  }
+
+  Future<String> _onUpdateMusic() async{
+    return await _methodChannel.invokeMethod("onUpdateMusic");
+  }
+
+  Future<dynamic> _platformCallHandler(MethodCall call) async{
+    switch(call.method){
+      case 'onUpdateMusic':
+        print(call.arguments);
+        setState((){
+          _musicTitle = call.arguments;
+        });
+        return Future.value('ok');
+      default:
+        print('unknown method ${call.method}');
+        throw MissingPluginException();
+        break;
+    }
+  }
+
+  @override
+  initState(){
+    super.initState();
+    
+    _methodChannel.setMethodCallHandler(_platformCallHandler);
   }
 
   @override
@@ -49,21 +79,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
             Text(
-              '$_counter',
+              'Music you are listening to now : $_musicTitle',
               style: Theme.of(context).textTheme.headline4,
+            ),
+            ElevatedButton(onPressed:_startService,
+                child:const Text("Start Service")
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),// This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

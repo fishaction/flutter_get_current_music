@@ -16,6 +16,8 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 
 public class MediaAppControllerService extends Service {
 
@@ -80,9 +82,16 @@ public class MediaAppControllerService extends Service {
 
         Log.d(TAG, "MediaControllerCompat created");
     }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
     @SuppressLint("LongLogTag")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG,"started MediaAppControllerService");
         mMediaAppDetails = handleIntent(intent);
         if (mMediaAppDetails != null) {
             if (mMediaAppDetails.componentName != null) {
@@ -134,9 +143,23 @@ public class MediaAppControllerService extends Service {
         private void onUpdate() {
             MediaMetadataCompat mediaMetadataCompat = mController.getMetadata();
             PlaybackStateCompat playbackState = mController.getPlaybackState();
+            if(mediaMetadataCompat != null){
+                String title = mediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE);
 
-            Log.d(TAG,mediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
-                    +":" +playbackState.getState() + ":" + mCallback.hashCode());
+                sendStatus("onUpdateMusic",title);
+                Log.d(TAG,mediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
+                        +":" +playbackState.getState() + ":" + mCallback.hashCode());
+            }
         }
     };
+
+    @SuppressLint("LongLogTag")
+    void sendStatus(String message, String title){
+        Log.d(TAG,"sendStatus:"+title);
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.putExtra("status",message);
+        broadcastIntent.putExtra("title",title);
+        broadcastIntent.setAction("UPDATE_ACTION");
+        getBaseContext().sendBroadcast(broadcastIntent);
+    }
 }

@@ -10,7 +10,26 @@
             android:name=".MyBroadcastReceiver"
             android:enabled="true"
             android:exported="true"></service>
+        <service android:name=".NotificationListener"
+            android:label="NotificationListener"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+        </service>
 
+        <service android:name=".MediaAppControllerService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+
+        <service
+            android:name=".MediaBrowserService"
+            android:enabled="true"
+            android:exported="true"
+            ></service>
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
