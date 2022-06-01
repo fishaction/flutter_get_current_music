@@ -22,8 +22,8 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.media.session.MediaSessionManager
 import android.os.Build
-import com.example.refactoringnowmusic.MediaAppControllerUtils
-import com.example.refactoringnowmusic.MediaAppDetails
+import com.example.get_current_music.MediaAppControllerUtils
+import com.example.get_current_music.MediaAppDetails
 
 /**
  * Implementation of [FindMediaAppsTask] that uses active media sessions to populate the
