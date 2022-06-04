@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Music you are listening to now : $_musicTitle',
+              'Music : $_musicTitle',
               style: Theme.of(context).textTheme.headline4,
             ),
             ElevatedButton(onPressed:_startService,
