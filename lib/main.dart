@@ -2,8 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'TwitterOAuth.dart';
 
-void main() {
+
+void main() async{
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -64,8 +68,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   initState(){
     super.initState();
-    
     _methodChannel.setMethodCallHandler(_platformCallHandler);
+    TwitterOAuth(context).initUniLinks();
+  }
+
+  void _none(){
+    TwitterOAuth(context).requestToken();
   }
 
   @override
@@ -86,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(onPressed:_startService,
                 child:const Text("Start Service")
             ),
+            ElevatedButton(onPressed: _none,child: const Text("Twitter Login")),
           ],
         ),
       ),// This trailing comma makes auto-formatting nicer for build methods.
