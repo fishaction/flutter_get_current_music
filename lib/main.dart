@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'TwitterOAuth.dart';
+import 'package:twitter_api_v2/twitter_api_v2.dart' as v2;
+import 'package:shared_preferences/shared_preferences.dart';
 
+
+
+late v2.TwitterApi twitterApi;
 
 void main() async{
   await dotenv.load(fileName: ".env");
@@ -34,6 +39,8 @@ class MyHomePage extends StatefulWidget {
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
+
+
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -76,6 +83,25 @@ class _MyHomePageState extends State<MyHomePage> {
     TwitterOAuth(context).requestToken();
   }
 
+  Future<void> _doHelloWorld() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String bearer = dotenv.env['TwitterBearer']!;
+    String consumerKey = dotenv.env['TwitterAPIKey']!;
+    String consumerSecret = dotenv.env['TwitterAPISecretKey']!;
+    String accessToken = prefs.getString('oauth_token')!;
+    String accessTokenSecret = prefs.getString('oauth_secret')!;
+    print(accessTokenSecret);
+    twitterApi = v2.TwitterApi(
+        bearerToken: bearer,
+        oauthTokens: v2.OAuthTokens(
+          consumerKey: consumerKey,
+          consumerSecret: consumerSecret,
+          accessToken: accessToken,
+          accessTokenSecret: accessTokenSecret,
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,6 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child:const Text("Start Service")
             ),
             ElevatedButton(onPressed: _none,child: const Text("Twitter Login")),
+            ElevatedButton(onPressed: _doHelloWorld, child: const Text('do Hello,World')),
           ],
         ),
       ),// This trailing comma makes auto-formatting nicer for build methods.
